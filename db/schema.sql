@@ -50,7 +50,8 @@ ALTER SEQUENCE public.accounts_account_id_seq OWNED BY public.accounts.account_i
 
 CREATE TABLE public.downloads (
     video_id integer NOT NULL,
-    object_id character varying(32)
+    object_id character varying(32) NOT NULL,
+    completed boolean DEFAULT false
 );
 
 

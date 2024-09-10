@@ -24,7 +24,8 @@ CREATE TABLE youtube_videos (
 
 CREATE TABLE downloads (
   video_id INT PRIMARY KEY,
-  object_id VARCHAR(32)
+  object_id VARCHAR(32) NOT NULL,
+  completed BOOL DEFAULT FALSE
 );
 
 CREATE TABLE subscriptions (
@@ -50,10 +51,10 @@ CREATE TABLE playback_positions (
 
 -- migrate:down
 
-DROP TABLE IF EXISTS accounts;
-DROP TABLE IF EXISTS youtube_channels;
-DROP TABLE IF EXISTS youtube_videos;
-DROP TABLE IF EXISTS downloads;
-DROP TABLE IF EXISTS subscriptions;
-DROP TABLE IF EXISTS watch_history;
 DROP TABLE IF EXISTS playback_positions;
+DROP TABLE IF EXISTS watch_history;
+DROP TABLE IF EXISTS subscriptions;
+DROP TABLE IF EXISTS downloads;
+DROP TABLE IF EXISTS youtube_videos;
+DROP TABLE IF EXISTS youtube_channels;
+DROP TABLE IF EXISTS accounts;
