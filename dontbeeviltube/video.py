@@ -7,7 +7,7 @@ import shutil
 import subprocess
 from uuid import UUID, uuid4 as get_random_uuid
 
-from dontbeeviltube.config import cfg
+from dontbeeviltube.config import cfg, Config
 from dontbeeviltube.database import db
 from dontbeeviltube.util import must
 
@@ -56,12 +56,15 @@ class Video:
         # database. Otherwise, the existing database entry is fine.
         with db.transaction() as txn:
             txn.execute(
-                "SELECT object_id, download_start_ts FROM downloads WHERE video_id = %s ORDER BY download_start_ts DESC LIMIT 1",
+                "SELECT object_id, download_start_ts, completed FROM downloads WHERE video_id = %s ORDER BY download_start_ts DESC LIMIT 1",
                 (self.internal_id,),
             )
-            if not (
-                rec := must(txn.fetchone())
-            ).completed and datetime.now() - rec.download_start_ts < timedelta(hours=1):
+            if (
+                (rec := txn.fetchone())
+                and not rec.completed
+                and datetime.now().astimezone() - rec.download_start_ts
+                < timedelta(hours=1)
+            ):
                 object_id = rec.object_id
             else:
                 txn.execute(
@@ -86,7 +89,7 @@ class Video:
             ],
             check=True,
         )
-        assert (cfg.media_dir / f"{object_id}.mp4").is_file()
+        assert (cfg.media_dir / f"{object_id}.webm").is_file()
         try:
             shutil.rmtree(cfg.temp_dir / f"{object_id}")
         except FileNotFoundError:
@@ -109,11 +112,14 @@ class Video:
             )
             while rec := txn.fetchone():
                 try:
-                    (cfg.media_dir / f"{rec.object_id}.mp4").unlink()
+                    (cfg.media_dir / f"{rec.object_id}.webm").unlink()
                 except FileNotFoundError:
                     pass
                 try:
                     (cfg.temp_dir / f"{rec.object_id}").unlink()
                 except FileNotFoundError:
                     pass
-            txn.execute("DELETE FROM downloads WHERE video_id = %s AND object_id != %s")
+            txn.execute(
+                "DELETE FROM downloads WHERE video_id = %s AND object_id != %s",
+                (self.internal_id, self.object_id),
+            )
