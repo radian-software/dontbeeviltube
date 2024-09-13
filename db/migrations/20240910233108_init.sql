@@ -23,9 +23,11 @@ CREATE TABLE youtube_videos (
 );
 
 CREATE TABLE downloads (
-  video_id INT PRIMARY KEY,
-  object_id VARCHAR(32) NOT NULL,
-  completed BOOL DEFAULT FALSE
+  object_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  video_id INT REFERENCES youtube_videos,
+  download_start_ts TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
+  download_end_ts TIMESTAMP WITH TIME ZONE,
+  completed BOOL GENERATED ALWAYS AS (download_end_ts IS NOT NULL) STORED
 );
 
 CREATE TABLE subscriptions (

@@ -49,9 +49,11 @@ ALTER SEQUENCE public.accounts_account_id_seq OWNED BY public.accounts.account_i
 --
 
 CREATE TABLE public.downloads (
-    video_id integer NOT NULL,
-    object_id character varying(32) NOT NULL,
-    completed boolean DEFAULT false
+    object_id uuid DEFAULT gen_random_uuid() NOT NULL,
+    video_id integer,
+    download_start_ts timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    download_end_ts timestamp with time zone,
+    completed boolean GENERATED ALWAYS AS ((download_end_ts IS NOT NULL)) STORED
 );
 
 
@@ -225,7 +227,7 @@ ALTER TABLE ONLY public.accounts
 --
 
 ALTER TABLE ONLY public.downloads
-    ADD CONSTRAINT downloads_pkey PRIMARY KEY (video_id);
+    ADD CONSTRAINT downloads_pkey PRIMARY KEY (object_id);
 
 
 --
@@ -274,6 +276,14 @@ ALTER TABLE ONLY public.youtube_channels
 
 ALTER TABLE ONLY public.youtube_videos
     ADD CONSTRAINT youtube_videos_pkey PRIMARY KEY (video_id);
+
+
+--
+-- Name: downloads downloads_video_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.downloads
+    ADD CONSTRAINT downloads_video_id_fkey FOREIGN KEY (video_id) REFERENCES public.youtube_videos(video_id);
 
 
 --

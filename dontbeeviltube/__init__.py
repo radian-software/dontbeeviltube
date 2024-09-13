@@ -1,3 +1,3 @@
-import flask
+import dotenv
 
-app = flask.Flask(__name__)
+dotenv.load_dotenv()
