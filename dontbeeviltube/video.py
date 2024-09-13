@@ -60,7 +60,7 @@ class Video:
         # while we were downloading, this might not work right.
         with db.cursor() as txn:
             txn.execute(
-                "UPDATE downloads SET download_end_ts = current_timestamp() WHERE object_id = %s",
+                "UPDATE downloads SET download_end_ts = current_timestamp WHERE object_id = %s",
                 (object_id,),
             )
         self.object_id = object_id

@@ -15,7 +15,7 @@ class Config:
         return Config(
             media_dir=storage / "media",
             temp_dir=storage / "temp",
-            db_addr=os.environ["DATABASE_URL"],
+            db_addr=os.environ["APP_DATABASE_URL"],
         )
 
 
