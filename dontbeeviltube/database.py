@@ -28,7 +28,7 @@ class Database:
 
     @contextmanager
     def getconn(self):
-        with self.pool.getconn() as conn:
+        with self.pool.connection() as conn:
             yield conn
 
     @contextmanager

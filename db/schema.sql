@@ -158,11 +158,11 @@ ALTER SEQUENCE public.youtube_channels_channel_id_seq OWNED BY public.youtube_ch
 CREATE TABLE public.youtube_videos (
     video_id integer NOT NULL,
     video_external_id character varying(16) NOT NULL,
-    video_name character varying(1024) NOT NULL,
-    video_description character varying(65536) NOT NULL,
-    video_duration real NOT NULL,
-    upload_ts timestamp with time zone NOT NULL,
-    refresh_ts timestamp with time zone NOT NULL
+    video_name character varying(1024),
+    video_description character varying(65536),
+    video_duration real,
+    upload_ts timestamp with time zone,
+    refresh_ts timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -276,6 +276,14 @@ ALTER TABLE ONLY public.youtube_channels
 
 ALTER TABLE ONLY public.youtube_videos
     ADD CONSTRAINT youtube_videos_pkey PRIMARY KEY (video_id);
+
+
+--
+-- Name: youtube_videos youtube_videos_video_external_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.youtube_videos
+    ADD CONSTRAINT youtube_videos_video_external_id_key UNIQUE (video_external_id);
 
 
 --

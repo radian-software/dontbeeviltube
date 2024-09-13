@@ -12,11 +12,15 @@ class Config:
     @staticmethod
     def from_env():
         storage = Path(os.environ["STORAGE_DIR"]).resolve()
-        return Config(
+        assert storage.is_dir(), storage
+        cfg = Config(
             media_dir=storage / "media",
             temp_dir=storage / "temp",
             db_addr=os.environ["APP_DATABASE_URL"],
         )
+        cfg.media_dir.mkdir(exist_ok=True)
+        cfg.temp_dir.mkdir(exist_ok=True)
+        return cfg
 
 
 cfg = Config.from_env()

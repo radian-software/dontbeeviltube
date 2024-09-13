@@ -1,10 +1,13 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from decimal import Decimal
+import shutil
 import subprocess
 from uuid import UUID, uuid4 as get_random_uuid
 
-from dontbeeviltube.config import Config
+from dontbeeviltube.config import cfg
 from dontbeeviltube.database import db
 from dontbeeviltube.util import must
 
@@ -13,12 +16,37 @@ from dontbeeviltube.util import must
 class Video:
     internal_id: int
     external_id: str
-    name: str
-    description: str
-    duration: Decimal
-    upload_ts: datetime
+    name: str | None
+    description: str | None
+    duration: Decimal | None
+    upload_ts: datetime | None
     refresh_ts: datetime
-    object_id: UUID | None
+    object_id: UUID | None = None
+
+    @staticmethod
+    def from_db(internal_id: int) -> Video:
+        with db.cursor() as curs:
+            curs.execute(
+                "SELECT * FROM youtube_videos WHERE video_id = %s LIMIT 1",
+                (internal_id,),
+            )
+            rec = must(curs.fetchone())
+            v = Video(
+                internal_id=rec.video_id,
+                external_id=rec.video_external_id,
+                name=rec.video_name,
+                description=rec.video_description,
+                duration=rec.video_duration,
+                upload_ts=rec.upload_ts,
+                refresh_ts=rec.refresh_ts,
+            )
+            curs.execute(
+                "SELECT object_id FROM downloads WHERE video_id = %s AND completed ORDER BY download_end_ts DESC LIMIT 1",
+                (internal_id,),
+            )
+            if rec := curs.fetchone():
+                v.object_id = rec.object_id
+            return v
 
     def download(self, cfg: Config):
         # Check most recent download for the video. If it is
@@ -37,12 +65,16 @@ class Video:
                 object_id = rec.object_id
             else:
                 txn.execute(
-                    "INSERT INTO downloads (video_id) VALUES (%s)",
+                    "INSERT INTO downloads (video_id) VALUES (%s) RETURNING object_id",
                     (self.internal_id,),
                 )
                 object_id = must(txn.fetchone()).object_id
         # Perform the actual download. This is the step that is the
-        # most likely to be interrupted.
+        # most likely to be interrupted. Set up the temporary
+        # directory beforehand, and tear it down afterward. If we get
+        # interrupted, things will be cleaned up next time the video
+        # is downloaded, or eventually by a cleanup process.
+        (cfg.temp_dir / f"{object_id}").mkdir(exist_ok=True)
         subprocess.run(
             [
                 "yt-dlp",
@@ -55,6 +87,10 @@ class Video:
             check=True,
         )
         assert (cfg.media_dir / f"{object_id}.mp4").is_file()
+        try:
+            shutil.rmtree(cfg.temp_dir / f"{object_id}")
+        except FileNotFoundError:
+            pass
         # Log in the database and in our own object that we completed
         # the download. If somebody else messed with the same object
         # while we were downloading, this might not work right.

@@ -14,12 +14,12 @@ CREATE TABLE youtube_channels (
 
 CREATE TABLE youtube_videos (
   video_id SERIAL PRIMARY KEY,
-  video_external_id VARCHAR(16) NOT NULL,
-  video_name VARCHAR(1024) NOT NULL,
-  video_description VARCHAR(65536) NOT NULL,
-  video_duration REAL NOT NULL,
-  upload_ts TIMESTAMP WITH TIME ZONE NOT NULL,
-  refresh_ts TIMESTAMP WITH TIME ZONE NOT NULL
+  video_external_id VARCHAR(16) NOT NULL UNIQUE,
+  video_name VARCHAR(1024),
+  video_description VARCHAR(65536),
+  video_duration REAL,
+  upload_ts TIMESTAMP WITH TIME ZONE,
+  refresh_ts TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp
 );
 
 CREATE TABLE downloads (
