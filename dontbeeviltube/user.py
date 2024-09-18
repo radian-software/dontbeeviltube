@@ -28,7 +28,7 @@ class User(UserMixin):
         with db.cursor() as curs:
             curs.execute(
                 "SELECT account_id, login_name FROM accounts WHERE flask_login_id = %s",
-                (flask_login_id,),
+                (str(flask_login_id),),
             )
             rec = must(curs.fetchone())
         return User(
@@ -44,7 +44,7 @@ class User(UserMixin):
                 "INSERT INTO accounts (login_name, password_bcrypt) VALUES (%s, %s) RETURNING flask_login_id",
                 (username, bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()),
             )
-            login_id = must(curs.fetchone()).flask_login_id
+            login_id = UUID(must(curs.fetchone()).flask_login_id)
         assert flask_login.login_user(
             user := User.from_flask_login_id(login_id), remember=True
         )
@@ -80,8 +80,6 @@ login_manager = LoginManager()
 @login_manager.user_loader
 def load_user(user_id: str) -> Optional[User]:
     try:
-        print("trying to login")
         return User.from_flask_login_id(UUID(user_id))
     except Exception:
-        print("got exc")
         return None
