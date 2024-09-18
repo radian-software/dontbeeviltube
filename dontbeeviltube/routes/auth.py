@@ -87,6 +87,9 @@ class RegisterForm(FlaskForm):
 
 @app.route("/auth/register", methods=["GET", "POST"])
 def route_register():
+    if flask_login.current_user.is_active:
+        flask.flash("You are already logged in", "warning")
+        return flask.redirect("/")
     form = RegisterForm()
     if form.validate_on_submit():
         User.create_and_login(form.username.data, form.password.data)
@@ -126,9 +129,29 @@ class LoginForm(FlaskForm):
 
 @app.route("/auth/login", methods=["GET", "POST"])
 def route_login():
+    if flask_login.current_user.is_active:
+        flask.flash("You are already logged in", "warning")
+        return flask.redirect("/")
     form = LoginForm()
     if form.validate_on_submit():
         if User.login(form.username.data, form.password.data):
             flask.flash("Logged you in")
             return flask.redirect("/")
     return flask.render_template("login.html", form=form)
+
+
+class EmptyForm(FlaskForm):
+    pass
+
+
+@app.route("/auth/logout", methods=["GET", "POST"])
+def route_logout():
+    if not flask_login.current_user.is_active:
+        flask.flash("You are not logged in", "warning")
+        return flask.redirect("/")
+    form = EmptyForm()
+    if form.validate_on_submit():
+        flask_login.logout_user()
+        flask.flash("Logged you out")
+        return flask.redirect("/")
+    return flask.render_template("logout.html", form=form)

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Logout{% endblock %}
+
+{% block body %}
+  {{ util.form_errors(form) }}
+  <form method="POST">
+    {{ form.csrf_token }}
+
+    <input type="submit" value="Logout" />
+  </form>
+{% endblock %}

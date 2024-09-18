@@ -3,17 +3,7 @@
 {% block title %}Login{% endblock %}
 
 {% block body %}
-  {% if form.errors %}
-    <ul>
-      {% for field, errors in form.errors.items() %}
-        <div>
-          {% for error in errors %}
-            <li>Error: {{ form[field].label or "Form" }}: {{ error }}</li>
-          {% endfor %}
-        </div>
-      {% endfor %}
-    </ul>
-  {% endif %}
+  {{ util.form_errors(form) }}
   <form method="POST">
     {{ form.csrf_token }}
 
