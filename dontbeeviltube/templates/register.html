@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+  {% if form.errors %}
+    <ul>
+      {% for field, errors in form.errors.items() %}
+        <div>
+          {% for error in errors %}
+            <li>Error: {{ form[field].label or "Form" }}: {{ error }}</li>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  <form method="POST">
+    {{ form.csrf_token }}
+
+    {{ form.username.label }}
+    {{ form.username() }}
+
+    {{ form.password.label }}
+    {{ form.password() }}
+
+    {{ form.confirm_password.label }}
+    {{ form.confirm_password() }}
+
+    <input type="submit" value="Register" />
+  </form>
+  <p>
+    There are no restrictions on your username, except that it cannot be more
+    than 64 characters.
+  </p>
+  <p>
+    There are no restrictions on your password, except that it cannot be more
+    than 64 characters, and it cannot already have appeared in a public data
+    breach (we will check this without exposing your password, using
+    <a href="https://haveibeenpwned.com/API/v3"
+      >Troy Hunt's Have I Been Pwned API</a
+    >).
+  </p>
+  <p>
+    You can use non-ASCII characters in your username and password, but if you
+    do that, make sure you will always have access to a computer which is able
+    to type them in. This service uses the
+    <a href="https://en.wikipedia.org/wiki/UTF-8">UTF-8</a> character encoding,
+    and 64 characters refers to 64 UTF-8 code-points.
+  </p>
+  <p>
+    To help avoid clipboard errors, all whitespace is automatically removed from
+    the beginning and end of your username and password in all entry fields.
+  </p>
+{% endblock %}

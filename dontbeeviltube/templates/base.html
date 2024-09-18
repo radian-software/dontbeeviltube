@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <nav>
+      <h1>dontbeeviltube</h1>
+      <ul>
+        {% if g.user.is_active %}
+          <li><span>Logged in as {{ g.user.username }}</span></li>
+          <li><a href="/auth/logout">Log out</a></li>
+        {% else %}
+          <li><a href="/auth/register">Register</a></li>
+          <li><a href="/auth/login">Log in</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+    <section>
+      {% for message in get_flashed_messages() %}
+        <div class="flash">{{ message }}</div>
+      {% endfor %}
+    </section>
+    <section>
+      <h1>{{ self.title() }}</h1>
+      {% block body %}{% endblock %}
+    </section>
+  </body>
+</html>

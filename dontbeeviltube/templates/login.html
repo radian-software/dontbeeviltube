@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block body %}
+  {% if form.errors %}
+    <ul>
+      {% for field, errors in form.errors.items() %}
+        <div>
+          {% for error in errors %}
+            <li>Error: {{ form[field].label or "Form" }}: {{ error }}</li>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  <form method="POST">
+    {{ form.csrf_token }}
+
+    {{ form.username.label }}
+    {{ form.username() }}
+
+    {{ form.password.label }}
+    {{ form.password() }}
+
+    <input type="submit" value="Login" />
+  </form>
+  <p>
+    To help avoid clipboard errors, all whitespace is automatically removed from
+    the beginning and end of your username and password in all entry fields.
+  </p>
+{% endblock %}

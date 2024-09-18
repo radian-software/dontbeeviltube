@@ -20,7 +20,8 @@ SET default_table_access_method = heap;
 CREATE TABLE public.accounts (
     account_id integer NOT NULL,
     login_name character varying(64) NOT NULL,
-    password_bcrypt character varying(128) NOT NULL
+    password_bcrypt character varying(128) NOT NULL,
+    flask_login_id character varying(64) DEFAULT gen_random_uuid() NOT NULL
 );
 
 
@@ -215,6 +216,14 @@ ALTER TABLE ONLY public.youtube_videos ALTER COLUMN video_id SET DEFAULT nextval
 
 
 --
+-- Name: accounts accounts_flask_login_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.accounts
+    ADD CONSTRAINT accounts_flask_login_id_key UNIQUE (flask_login_id);
+
+
+--
 -- Name: accounts accounts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -352,4 +361,5 @@ ALTER TABLE ONLY public.watch_history
 --
 
 INSERT INTO public.schema_migrations (version) VALUES
-    ('20240910233108');
+    ('20240910233108'),
+    ('20240915025804');
