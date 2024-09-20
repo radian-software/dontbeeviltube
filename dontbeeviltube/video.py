@@ -16,7 +16,7 @@ from dontbeeviltube.util import must
 class Video:
     internal_id: int
     external_id: str
-    name: str | None
+    title: str | None
     description: str | None
     duration: Decimal | None
     upload_ts: datetime | None
@@ -34,7 +34,7 @@ class Video:
             v = Video(
                 internal_id=rec.video_id,
                 external_id=rec.video_external_id,
-                name=rec.video_name,
+                title=rec.video_name,
                 description=rec.video_description,
                 duration=rec.video_duration,
                 upload_ts=rec.upload_ts,
