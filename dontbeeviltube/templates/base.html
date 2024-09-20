@@ -18,6 +18,12 @@
           <li><a href="/auth/login">Log in</a></li>
         {% endif %}
       </ul>
+      <form method="GET" action="/search">
+        <label for="q">Search</label>
+        <input name="q" required type="text" value="{{ g.search_query }}" />
+
+        <input type="submit" value="Search" />
+      </form>
     </nav>
     <section>
       {% for message in get_flashed_messages() %}

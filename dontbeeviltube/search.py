@@ -64,7 +64,10 @@ def search_videos(query: str) -> list[VideoSearchResult]:
         VideoSearchResult(
             video_id=v["id"],
             title=v["title"],
-            published_time=must(parse_date(v["publishedTime"])),
+            published_time=must(
+                parse_date(v["publishedTime"].removeprefix("Streamed ")),
+                f"uninterpretable publish time {v['publishedTime']}",
+            ),
             duration=parse_duration(v["duration"]),
             view_count=int(
                 v["viewCount"]["text"].removesuffix(" views").replace(",", "")

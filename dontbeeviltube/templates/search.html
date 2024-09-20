@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ g.search_query }} - Search{% endblock %}
+
+{% block body %}
+  <div class="video-cards">
+    {% for video in search_results %}
+      <div class="video-card">
+        <div class="thumbnail">
+          <img src="{{ video.thumbnails[-1].url }}" loading="lazy" />
+        </div>
+        <div class="title">{{ video.title }}</div>
+        <div class="channel">
+          <a href="/channel/{{ video.channel_id }}">{{ video.channel_name }}</a>
+        </div>
+        <div class="date">Posted {{ video.published_time }}</div>
+        <div class="viewcount">{{ video.view_count }} views</div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}
