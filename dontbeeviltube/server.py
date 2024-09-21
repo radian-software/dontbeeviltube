@@ -12,3 +12,4 @@ login_manager.init_app(app)
 import dontbeeviltube.routes.auth
 import dontbeeviltube.routes.search
 import dontbeeviltube.routes.static
+import dontbeeviltube.routes.watch

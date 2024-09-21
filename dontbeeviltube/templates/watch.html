@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ g.video_id }} - Watch{% endblock %}
+
+{% block body %}
+  <div class="player status-{{ video_status }}">
+    {% if video_status == "ready" %}
+      <video src="/stream/{{ g.video_id }}.mp4"></video>
+    {% else %}
+      <span>Status: {{ video_status }}</span>
+    {% endif %}
+  </div>
+{% endblock %}
