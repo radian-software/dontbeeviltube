@@ -7,7 +7,9 @@
     {% for video in search_results %}
       <div class="video-card">
         <div class="thumbnail">
-          <img src="{{ video.thumbnails[-1].url }}" loading="lazy" />
+          <a href="/watch?v={{ video.video_id }} ">
+            <img src="{{ video.thumbnails[-1].url }}" loading="lazy" />
+          </a>
         </div>
         <div class="title">{{ video.title }}</div>
         <div class="channel">
