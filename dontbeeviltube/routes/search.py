@@ -1,6 +1,6 @@
 import flask
 
-from dontbeeviltube.search import search_videos
+from dontbeeviltube.search import search
 from dontbeeviltube.server import app
 
 
@@ -15,5 +15,5 @@ def route_search():
         flask.flash("No search query provided", "error")
         return flask.redirect("/")
     return flask.render_template(
-        "search.html", search_results=search_videos(flask.g.search_query)
+        "search.html", search_results=search(flask.g.search_query)
     )

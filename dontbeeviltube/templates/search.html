@@ -1,22 +1,52 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ g.search_query }} - Search{% endblock %}
+{% block title %}Search{% endblock %}
 
 {% block body %}
-  <div class="video-cards">
-    {% for video in search_results %}
-      <div class="video-card">
-        <div class="thumbnail">
-          <a href="/watch?v={{ video.video_id }} ">
-            <img src="{{ video.thumbnails[-1].url }}" loading="lazy" />
-          </a>
-        </div>
-        <div class="title">{{ video.title }}</div>
-        <div class="channel">
-          <a href="/channel/{{ video.channel_id }}">{{ video.channel_name }}</a>
-        </div>
-        <div class="date">Posted {{ video.published_time }}</div>
-        <div class="viewcount">{{ video.view_count }} views</div>
+  <div class="result-cards">
+    {% for result in search_results %}
+      <div class="result-card result-{{ result.type }}">
+        {% if result.type == "video" %}
+          <div class="thumbnail">
+            <a href="/watch?v={{ result.id }} ">
+              <img src="{{ result.thumbnails[-1].url }}" loading="lazy" />
+            </a>
+          </div>
+          <div class="title">{{ result.title }}</div>
+          <div class="channel">
+            <a href="/channel/{{ result.channel_id }}"
+              >{{ result.channel_name }}</a
+            >
+          </div>
+          <div class="date">Posted {{ result.published_time }}</div>
+          <div class="viewcount">{{ result.view_count }} views</div>
+          <div class="duration">{{ result.duration_str }}</div>
+          <div class="desciption">{{ result.description_snippet }}</div>
+        {% elif result.type == "channel" %}
+          <div class="thumbnail">
+            <a href="/channel/{{ result.id }}">
+              <img src="{{ result.thumbnails[-1].url }}" loading="lazy" />
+            </a>
+          </div>
+          <div class="title">{{ result.title }}</div>
+          <div class="subscribercount">
+            {{ result.subscriber_count }} subscribers
+          </div>
+          <div class="desciption">{{ result.description_snippet }}</div>
+        {% elif result.type == "playlist" %}
+          <div class="thumbnail">
+            <a href="/playlist?list={{ result.id }}">
+              <img src="{{ result.thumbnails[-1].url }}" loading="lazy" />
+            </a>
+          </div>
+          <div class="title">{{ result.title }}</div>
+          <div class="channel">
+            <a href="/channel/{{ result.channel_id }}"
+              >{{ result.channel_name }}</a
+            >
+          </div>
+          <div class="videocount">{{ result.video_count }} videos</div>
+        {% endif %}
       </div>
     {% endfor %}
   </div>

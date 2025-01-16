@@ -51,7 +51,7 @@ class Thumbnail:
 @dataclass
 class Video:
 
-    video_id: str
+    id: str
     title: str
     published_time: datetime
     duration: Decimal
@@ -64,12 +64,21 @@ class Video:
 
     type: str = "video"
 
+    @property
+    def duration_str(self) -> str:
+        dur = int(self.duration)
+        parts = []
+        while dur:
+            parts.append(dur % 60)
+            dur //= 60
+        return ":".join(f"{p:02d}" for p in reversed(parts))
+
 
 @dataclass
 class Channel:
 
-    channel_id: str
-    name: str
+    id: str
+    title: str
     subscriber_count: int
     thumbnails: list[Thumbnail]
     description_snippet: str
@@ -80,8 +89,8 @@ class Channel:
 @dataclass
 class Playlist:
 
-    playlist_id: str
-    name: str
+    id: str
+    title: str
     video_count: int
     thumbnails: list[Thumbnail]
     channel_name: str
@@ -133,7 +142,7 @@ def search(query: str) -> list[Video | Channel]:
                     if elt := item.get("videoRenderer"):
                         results.append(
                             Video(
-                                video_id=elt["videoId"],
+                                id=elt["videoId"],
                                 title=lookup(elt, ["title", "runs", 0, "text"]),
                                 published_time=must(
                                     parse_date(
@@ -154,12 +163,7 @@ def search(query: str) -> list[Video | Channel]:
                                 thumbnails=Thumbnail.from_google(
                                     lookup(
                                         elt,
-                                        [
-                                            "channelThumbnailSupportedRenderers",
-                                            "channelThumbnailWithLinkRenderer",
-                                            "thumbnail",
-                                            "thumbnails",
-                                        ],
+                                        ["thumbnail", "thumbnails"],
                                     )
                                 ),
                                 description_snippet=elt.get("detailedMetadataSnippets")
@@ -205,8 +209,8 @@ def search(query: str) -> list[Video | Channel]:
                     elif elt := item.get("channelRenderer"):
                         results.append(
                             Channel(
-                                channel_id=elt["channelId"],
-                                name=lookup(elt, ["title", "simpleText"]),
+                                id=elt["channelId"],
+                                title=lookup(elt, ["title", "simpleText"]),
                                 subscriber_count=parse_amount(
                                     lookup(
                                         elt, ["videoCountText", "simpleText"]
@@ -225,8 +229,8 @@ def search(query: str) -> list[Video | Channel]:
                         assert elt["contentType"] == "LOCKUP_CONTENT_TYPE_PLAYLIST"
                         results.append(
                             Playlist(
-                                playlist_id=elt["contentId"],
-                                name=lookup(
+                                id=elt["contentId"],
+                                title=lookup(
                                     elt,
                                     [
                                         "metadata",

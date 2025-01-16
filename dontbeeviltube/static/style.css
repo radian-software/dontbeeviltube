@@ -1,0 +1,17 @@
+.result-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.result-card {
+  width: 100%;
+  max-width: 600px;
+}
+
+.thumbnail img {
+  width: 100%;
+  object-fit: contain;
+  max-width: 600px;
+  max-height: 335px;
+}
