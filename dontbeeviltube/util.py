@@ -30,3 +30,12 @@ def parse_duration(s: str) -> Decimal:
         + Decimal(m["minutes"]) * 60
         + Decimal(m.get("hours") or "0") * 3600
     )
+
+
+def parse_amount(s: str) -> int:
+    n = Decimal(s.rstrip("KM"))
+    if s.endswith("K"):
+        n *= 10 ** 3
+    elif s.endswith("M"):
+        n *= 10 ** 6
+    return int(n)
