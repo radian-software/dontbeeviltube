@@ -1,5 +1,14 @@
 # dontbeeviltube
 
+This is an unfinished project about an open-source frontend to
+YouTube, kind of like [Invidious](https://invidious.io/) except with
+an architecture based on downloading the video on the backend using
+[yt-dlp](https://github.com/yt-dlp/yt-dlp) before streaming to the
+client, and thus benefiting from their faster turnaround time on
+responding to Google crap being updated.
+
+## Setup
+
 Create `.env` file:
 
 ```
